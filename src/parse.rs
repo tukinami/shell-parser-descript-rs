@@ -9,6 +9,7 @@ use self::parts::{empty_line, parse_line_func};
 
 mod balloon_representation;
 mod base;
+mod menu;
 mod parts;
 mod shell_representation;
 
@@ -29,5 +30,10 @@ fn parse_line<'a>(input: &'a str) -> IResult<&'a str, LineContainer, ShellParseE
 }
 
 fn shell_descript_line<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
-    alt((base::base, shell_representation::shell_representation))(input)
+    alt((
+        base::base,
+        shell_representation::shell_representation,
+        balloon_representation::balloon_representation,
+        menu::menu,
+    ))(input)
 }

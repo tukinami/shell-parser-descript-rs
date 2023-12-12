@@ -65,7 +65,7 @@ pub enum ShellDescriptLine {
     KeroBalloonAlignment(BalloonPosition),
     SakuraBalloonDontmove(FlagType),
     KeroBalloonDontmove(FlagType),
-    CharBalloonDontmove(FlagType),
+    CharBalloonDontmove(CharacterIdType, FlagType),
     // menu
     MenuFontName(String),
     MenuFontHeight(FontSizeType),
@@ -146,7 +146,7 @@ pub enum MenuPositionForegroundBackgroundBase {
     Righttop,
     Leftbottom,
     Centerbottom,
-    RightBottom,
+    Rightbottom,
 }
 
 #[derive(Debug, Clone, PartialEq)]
