@@ -113,7 +113,7 @@ pub enum ShellDescriptLine {
     KeroMenuitem(u32, BindMenuItem),
     KeroMenuitemex(u32, String, BindMenuItem),
     KeroMenu(BindMenuVisibility),
-    CharBindgroupCame(CharacterIdType, BindGroupNameProps),
+    CharBindgroupName(CharacterIdType, BindGroupNameProps),
     CharBindgroupDefault(CharacterIdType, AnimationIdType, FlagType),
     CharBindgroupAddid(CharacterIdType, AnimationIdType, Vec<AnimationIdType>),
     CharBindoptionGroup(CharacterIdType, BindOption),
@@ -170,7 +170,7 @@ pub enum MenuPositionSidebarRepeat {
 pub struct BindGroupNameProps {
     id: AnimationIdType,
     category: String,
-    part_anme: String,
+    part_name: String,
     thumbnail_name: Option<String>,
 }
 
@@ -208,13 +208,13 @@ impl BindGroupNameProps {
     pub fn new(
         id: AnimationIdType,
         category: String,
-        part_anme: String,
+        part_name: String,
         thumbnail_name: Option<String>,
     ) -> BindGroupNameProps {
         BindGroupNameProps {
             id,
             category,
-            part_anme,
+            part_name,
             thumbnail_name,
         }
     }
@@ -225,8 +225,8 @@ impl BindGroupNameProps {
     pub fn category(&self) -> &String {
         &self.category
     }
-    pub fn part_anme(&self) -> &String {
-        &self.part_anme
+    pub fn part_name(&self) -> &String {
+        &self.part_name
     }
     pub fn thumbnail_name(&self) -> &Option<String> {
         &self.thumbnail_name
