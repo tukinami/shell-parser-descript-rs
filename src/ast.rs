@@ -1,7 +1,7 @@
 use shell_parser_common_rs::charset::Charset;
 
 pub type CharacterIdType = u32;
-pub type DesktopPositionType = u32;
+pub type DesktopPositionType = i64;
 pub type FlagType = u8;
 pub type FontSizeType = u32;
 pub type ColorType = u8;
@@ -15,7 +15,6 @@ pub struct ShellDescript {
 #[derive(Debug, Clone, PartialEq)]
 pub enum LineContainer {
     EmptyLine,
-    Comment(String),
     Body(ShellDescriptLine),
 }
 

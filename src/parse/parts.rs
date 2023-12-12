@@ -4,8 +4,8 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::digit1,
-    combinator::{eof, map, map_res},
-    sequence::{preceded, terminated},
+    combinator::{eof, map, map_res, opt},
+    sequence::{preceded, terminated, tuple},
     IResult,
 };
 use shell_parser_common_rs::ShellParseError;
@@ -36,6 +36,19 @@ where
     T: FromStr,
 {
     map_res(digit1, |v: &str| v.parse())(input)
+}
+
+pub(super) fn digit_neg<'a, T>(input: &'a str) -> IResult<&'a str, T, ShellParseError>
+where
+    T: FromStr + std::ops::Neg<Output = T>,
+{
+    map(tuple((opt(tag("-")), digit::<T>)), |(sign, v)| {
+        if sign.is_some() {
+            -v
+        } else {
+            v
+        }
+    })(input)
 }
 
 pub(super) fn char_id<'a>(input: &'a str) -> IResult<&'a str, CharacterIdType, ShellParseError> {
@@ -144,6 +157,34 @@ mod tests {
         fn failed_when_invalid_str() {
             let case = "XYZ";
             assert!(digit::<i32>(case).is_err());
+        }
+    }
+
+    mod digit_neg {
+        use super::*;
+
+        #[test]
+        fn success_when_valid_str() {
+            let case = "1234\r\n";
+            let (remain, result) = digit_neg::<i16>(case).unwrap();
+            assert_eq!(remain, "\r\n");
+            assert_eq!(result, 1234);
+
+            let case = "-1234\r\n";
+            let (remain, result) = digit_neg::<i16>(case).unwrap();
+            assert_eq!(remain, "\r\n");
+            assert_eq!(result, -1234);
+
+            let case = "0";
+            let (remain, result) = digit_neg::<i8>(case).unwrap();
+            assert_eq!(remain, "");
+            assert_eq!(result, 0);
+        }
+
+        #[test]
+        fn failed_when_invalid_str() {
+            let case = "abc";
+            assert!(digit_neg::<i8>(case).is_err());
         }
     }
 

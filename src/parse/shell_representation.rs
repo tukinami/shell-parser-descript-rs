@@ -10,7 +10,7 @@ use shell_parser_common_rs::ShellParseError;
 
 use crate::ast::{CharacterIdType, ShellDescriptLine, SurfacePosition};
 
-use super::parts::{char_id, digit};
+use super::parts::{char_id, digit, digit_neg};
 
 pub(super) fn shell_representation<'a>(
     input: &'a str,
@@ -91,28 +91,28 @@ fn char_seriko_alignmenttodesktop<'a>(
 
 fn char_defaultx<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
     map(
-        tuple((char_id, preceded(tag(".defaultx,"), digit))),
+        tuple((char_id, preceded(tag(".defaultx,"), digit_neg))),
         |(id, v)| ShellDescriptLine::CharDefaultx(id, v),
     )(input)
 }
 
 fn char_defaulty<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
     map(
-        tuple((char_id, preceded(tag(".defaulty,"), digit))),
+        tuple((char_id, preceded(tag(".defaulty,"), digit_neg))),
         |(id, v)| ShellDescriptLine::CharDefaulty(id, v),
     )(input)
 }
 
 fn char_defaultleft<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
     map(
-        tuple((char_id, preceded(tag(".defaultleft,"), digit))),
+        tuple((char_id, preceded(tag(".defaultleft,"), digit_neg))),
         |(id, v)| ShellDescriptLine::CharDefaultleft(id, v),
     )(input)
 }
 
 fn char_defaulttop<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
     map(
-        tuple((char_id, preceded(tag(".defaulttop,"), digit))),
+        tuple((char_id, preceded(tag(".defaulttop,"), digit_neg))),
         |(id, v)| ShellDescriptLine::CharDefaulttop(id, v),
     )(input)
 }
@@ -120,7 +120,7 @@ fn char_defaulttop<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, Sh
 macro_rules! line_has_only_desktop_position {
     ($name:ident, $tag:expr, $pat:path) => {
         fn $name<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
-            map(preceded(tag($tag), digit), |v| $pat(v))(input)
+            map(preceded(tag($tag), digit_neg), |v| $pat(v))(input)
         }
     };
 }

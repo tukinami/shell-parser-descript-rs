@@ -9,7 +9,7 @@ use shell_parser_common_rs::ShellParseError;
 
 use crate::ast::{BalloonPosition, FlagType, ShellDescriptLine};
 
-use super::parts::{char_id, digit};
+use super::parts::{char_id, digit, digit_neg};
 
 pub(super) fn balloon_representation<'a>(
     input: &'a str,
@@ -30,7 +30,7 @@ pub(super) fn balloon_representation<'a>(
 fn sakura_balloon_offsetx<'a>(
     input: &'a str,
 ) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
-    map(preceded(tag("sakura.balloon.offsetx,"), digit), |v| {
+    map(preceded(tag("sakura.balloon.offsetx,"), digit_neg), |v| {
         ShellDescriptLine::SakuraBalloonOffsetx(v)
     })(input)
 }
@@ -38,7 +38,7 @@ fn sakura_balloon_offsetx<'a>(
 fn sakura_balloon_offsety<'a>(
     input: &'a str,
 ) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
-    map(preceded(tag("sakura.balloon.offsety,"), digit), |v| {
+    map(preceded(tag("sakura.balloon.offsety,"), digit_neg), |v| {
         ShellDescriptLine::SakuraBalloonOffsety(v)
     })(input)
 }
@@ -46,7 +46,7 @@ fn sakura_balloon_offsety<'a>(
 fn kero_balloon_offsetx<'a>(
     input: &'a str,
 ) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
-    map(preceded(tag("kero.balloon.offsetx,"), digit), |v| {
+    map(preceded(tag("kero.balloon.offsetx,"), digit_neg), |v| {
         ShellDescriptLine::KeroBalloonOffsetx(v)
     })(input)
 }
@@ -54,7 +54,7 @@ fn kero_balloon_offsetx<'a>(
 fn kero_balloon_offsety<'a>(
     input: &'a str,
 ) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
-    map(preceded(tag("kero.balloon.offsety,"), digit), |v| {
+    map(preceded(tag("kero.balloon.offsety,"), digit_neg), |v| {
         ShellDescriptLine::KeroBalloonOffsety(v)
     })(input)
 }
