@@ -1,3 +1,5 @@
+//! AST for `ShellDescript`.
+
 use shell_parser_common_rs::charset::Charset;
 
 pub type CharacterIdType = u32;
@@ -7,6 +9,7 @@ pub type FontSizeType = u32;
 pub type ColorType = u8;
 pub type AnimationIdType = u32;
 
+/// Root of `ShellDescript`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ShellDescript {
     lines: Vec<LineContainer>,
