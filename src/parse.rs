@@ -19,7 +19,7 @@ use shell_parser_common_rs::{
 
 use crate::ast::{LineContainer, ShellDescript, ShellDescriptLine};
 
-use self::parts::{empty_line, newline_body, parse_line_func};
+use self::parts::{comment_line, empty_line, newline_body, parse_line_func};
 
 mod alpha;
 mod balloon_representation;
@@ -90,7 +90,7 @@ fn parse_for_decode_charset<'a>(input: &'a str) -> IResult<&'a str, Charset, She
 /// # Example
 ///
 /// ```
-/// use shell_parser_descript_rs::parse;
+/// use shell_parser_descript_rs::{parse, LineContainer, ShellDescriptLine};
 ///
 /// let case = r#"charset,Shift_JIS
 /// type,shell
@@ -119,8 +119,17 @@ fn parse_for_decode_charset<'a>(input: &'a str) -> IResult<&'a str, Charset, She
 ///         return;
 ///     }
 /// };
-///
 /// assert_eq!(shell_descript.lines().len(), 18);
+///
+/// let shell_descript_bodies: Vec<ShellDescriptLine> = shell_descript
+///     .lines()
+///     .iter()
+///     .filter_map(|v| match v {
+///         LineContainer::Body(v) => Some(v.clone()),
+///         _ => None,
+///     })
+///     .collect();
+/// assert_eq!(shell_descript_bodies.len(), 15);
 /// ```
 pub fn parse<'a>(input: &'a str) -> Result<ShellDescript, nom::Err<ShellParseError>> {
     shell_descript(input).map(|(_, v)| v)
@@ -135,7 +144,11 @@ fn parse_lines<'a>(input: &'a str) -> IResult<&'a str, Vec<LineContainer>, Shell
 }
 
 fn parse_line<'a>(input: &'a str) -> IResult<&'a str, LineContainer, ShellParseError> {
-    alt((parse_line_func(shell_descript_line), empty_line))(input)
+    alt((
+        parse_line_func(shell_descript_line),
+        comment_line,
+        empty_line,
+    ))(input)
 }
 
 fn shell_descript_line<'a>(input: &'a str) -> IResult<&'a str, ShellDescriptLine, ShellParseError> {
@@ -347,6 +360,15 @@ kero.balloon.alignment,none
 "#;
             let result = parse(case).unwrap();
             assert_eq!(result.lines().len(), 19);
+            let bodies: Vec<ShellDescriptLine> = result
+                .lines()
+                .iter()
+                .filter_map(|v| match v {
+                    LineContainer::Body(v) => Some(v.clone()),
+                    _ => None,
+                })
+                .collect();
+            assert_eq!(bodies.len(), 15);
         }
 
         #[test]

@@ -18,6 +18,7 @@ pub struct ShellDescript {
 #[derive(Debug, Clone, PartialEq)]
 pub enum LineContainer {
     EmptyLine,
+    CommentLine(String),
     Body(ShellDescriptLine),
 }
 

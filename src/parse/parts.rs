@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use nom::{
     branch::alt,
-    bytes::complete::tag,
+    bytes::complete::{is_not, tag},
     character::complete::digit1,
     combinator::{eof, map, map_res, opt},
     sequence::{preceded, terminated, tuple},
@@ -29,6 +29,12 @@ where
 
 pub(super) fn empty_line<'a>(input: &'a str) -> IResult<&'a str, LineContainer, ShellParseError> {
     map(newline_body, |_| LineContainer::EmptyLine)(input)
+}
+
+pub(super) fn comment_line<'a>(input: &'a str) -> IResult<&'a str, LineContainer, ShellParseError> {
+    map(terminated(is_not("\r\n"), newline_body), |v| {
+        LineContainer::CommentLine(v.to_string())
+    })(input)
 }
 
 pub(super) fn digit<'a, T>(input: &'a str) -> IResult<&'a str, T, ShellParseError>
@@ -139,6 +145,24 @@ mod tests {
         fn failed_when_invalid_str() {
             let case = "abc\r\n";
             assert!(empty_line(case).is_err());
+        }
+    }
+
+    mod comment_line {
+        use super::*;
+
+        #[test]
+        fn success_when_valid_str() {
+            let case = "aaa\r\nabc";
+            let (remain, result) = comment_line(case).unwrap();
+            assert_eq!(remain, "abc");
+            assert_eq!(result, LineContainer::CommentLine("aaa".to_string()));
+        }
+
+        #[test]
+        fn failed_when_invalid_str() {
+            let case = "\r\n";
+            assert!(comment_line(case).is_err());
         }
     }
 
